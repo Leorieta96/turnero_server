@@ -7,6 +7,7 @@ const { addTurn, getTurn } = require("../controllers/turnController");
 // api/auth
 router.post(
   "/",
+  authWithExpired,
   addTurn
 );
 

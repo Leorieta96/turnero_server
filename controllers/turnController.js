@@ -11,6 +11,7 @@ exports.addTurn = async (req, res) => {
     }
     try {
       const { day, turn, paciente: dataPaciente } = req.body;
+      const { user } = req;
       let paciente = await Paciente.findOne({ dni: dataPaciente.dni });
       if (!paciente) {
         paciente = new Paciente(dataPaciente);
@@ -32,7 +33,8 @@ exports.addTurn = async (req, res) => {
         ...day,
         turns: turnUpdate
       }
-      res.json({ day: dayUpdate, paciente });
+      const result = await Day.findById(day._id).populate('turns.id_paciente');
+      res.json({ day: user ? result : dayUpdate, paciente, turn: dayUpdate });
     } catch (e) {
       console.log(e);
       res.status(500).send("Hubo un error");
@@ -54,7 +56,7 @@ exports.getTurn = async (req, res) => {
       if (data) {
         return {
           ...data._doc,
-          turns: data._doc.turns.filter((d) => d.id_paciente !== undefined && d.id_paciente.dni !== dni )
+          turns: data._doc.turns.filter((d) => d.id_paciente !== undefined && d.id_paciente.dni !== dni)
         };
       }
       return [];

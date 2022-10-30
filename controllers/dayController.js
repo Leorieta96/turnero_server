@@ -56,14 +56,14 @@ exports.updateDay = async (req, res) => {
   try {
     const { id } = req.params;
     const { turns } = req.body;
-    Day.findByIdAndUpdate(id, { turns }, { new: true }).then(day =>
+    return Day.findByIdAndUpdate(id, { turns }, { new: true }).populate('turns.id_paciente').then(day =>
       res.status(200).json(day)
     ).catch(e => {
       console.log(e);
-      res.status(500).json({ msg: "Hubo un error" });
+      return res.status(500).json({ msg: "Hubo un error" });
     });
   } catch (e) {
     console.log(e);
-    res.status(500).json({ msg: "Hubo un error" });
+    return res.status(500).json({ msg: "Hubo un error" });
   }
 };
