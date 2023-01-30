@@ -13,7 +13,9 @@ exports.addTurn = async (req, res) => {
       const { day, turn, paciente: dataPaciente } = req.body;
       const { user } = req;
       let paciente = await Paciente.findOne({ dni: dataPaciente.dni });
-      let dayOrigin = await Day.findOne({ _id: day._id });
+      const dayOrigin = await Day.findById(day._id);
+      console.log(day);
+      console.log(dayOrigin);
       if (!paciente) {
         paciente = new Paciente(dataPaciente);
         await paciente.save()
@@ -22,7 +24,7 @@ exports.addTurn = async (req, res) => {
         ...turn,
         id_paciente: paciente._id
       };
-      const index = dayOrigin.turns.findIndex((e) => e._id === turnUpdate._id);
+      const index = dayOrigin.turns.findIndex((e) => String(e._id) === turnUpdate._id);
       console.log(index);
       const turnsUpdate = dayOrigin.turns;
       turnsUpdate[index] = turnUpdate;
