@@ -37,7 +37,7 @@ exports.addTurn = async (req, res) => {
         turns: turnUpdate
       }
       const result = await Day.findById(day._id).populate('turns.id_paciente');
-      res.json({ day: user ? result : dayUpdate, paciente, turn: turnUpdate });
+      res.json({ day: user ? result : dayUpdate, paciente, turn: dayUpdate });
     } catch (e) {
       console.log(e);
       res.status(500).send("Hubo un error");
