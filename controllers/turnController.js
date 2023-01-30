@@ -59,9 +59,11 @@ exports.getTurn = async (req, res) => {
     const { query: { code, dni } } = req;
     const day = await Day.findOne({ code }).populate('turns.id_paciente').then((data) => {
       if (data) {
+        const turns = data._doc.turns.filter((d) => d.id_paciente !== undefined);
+        console.log(turns)
         return {
           ...data._doc,
-          turns: data._doc.turns.filter((d) => d.id_paciente !== undefined && d.id_paciente.dni !== dni)
+          turns: turns.filter((d) =>d.id_paciente.dni === Number(dni))
         };
       }
       return [];
