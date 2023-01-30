@@ -2,7 +2,6 @@ const Turn = require("../models/Turn");
 const Paciente = require("../models/Paciente");
 const Day = require("../models/Day");
 const { validationResult } = require("express-validator");
-const Day = require("../models/Day");
 
 exports.addTurn = async (req, res) => {
   try {
