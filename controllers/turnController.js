@@ -13,7 +13,7 @@ exports.addTurn = async (req, res) => {
       const { day, turn, paciente: dataPaciente } = req.body;
       const { user } = req;
       let paciente = await Paciente.findOne({ dni: dataPaciente.dni });
-      let dayOrigin = await Day.findOne({ id: day._id });
+      let dayOrigin = await Day.findOne({ _id: day._id });
       if (!paciente) {
         paciente = new Paciente(dataPaciente);
         await paciente.save()
@@ -23,19 +23,21 @@ exports.addTurn = async (req, res) => {
         id_paciente: paciente._id
       };
       const index = dayOrigin.turns.findIndex((e) => e._id === turnUpdate._id);
+      console.log(index);
       const turnsUpdate = dayOrigin.turns;
       turnsUpdate[index] = turnUpdate;
       let dayUpdate = {
         ...dayOrigin,
         turns: turnsUpdate
       }
+      console.log(dayUpdate);
       await Day.findByIdAndUpdate(dayOrigin._id, dayUpdate, { new: true })
       dayUpdate = {
         ...dayOrigin,
         turns: turnUpdate
       }
       const result = await Day.findById(day._id).populate('turns.id_paciente');
-      res.json({ day: user ? result : dayUpdate, paciente, turn: dayUpdate });
+      res.json({ day: user ? result : dayUpdate, paciente, turn: turnUpdate });
     } catch (e) {
       console.log(e);
       res.status(500).send("Hubo un error");
