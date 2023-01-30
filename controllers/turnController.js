@@ -1,5 +1,6 @@
 const Turn = require("../models/Turn");
 const Paciente = require("../models/Paciente");
+const Day = require("../models/Day");
 const { validationResult } = require("express-validator");
 const Day = require("../models/Day");
 
@@ -13,6 +14,7 @@ exports.addTurn = async (req, res) => {
       const { day, turn, paciente: dataPaciente } = req.body;
       const { user } = req;
       let paciente = await Paciente.findOne({ dni: dataPaciente.dni });
+      let dayOrigin = await Day.findOne({ id: day._id });
       if (!paciente) {
         paciente = new Paciente(dataPaciente);
         await paciente.save()
@@ -21,16 +23,16 @@ exports.addTurn = async (req, res) => {
         ...turn,
         id_paciente: paciente._id
       };
-      const index = day.turns.findIndex((e) => e._id === turnUpdate._id);
-      const turnsUpdate = day.turns;
+      const index = dayOrigin.turns.findIndex((e) => e._id === turnUpdate._id);
+      const turnsUpdate = dayOrigin.turns;
       turnsUpdate[index] = turnUpdate;
       let dayUpdate = {
-        ...day,
+        ...dayOrigin,
         turns: turnsUpdate
       }
-      await Day.findByIdAndUpdate(day._id, dayUpdate, { new: true })
+      await Day.findByIdAndUpdate(dayOrigin._id, dayUpdate, { new: true })
       dayUpdate = {
-        ...day,
+        ...dayOrigin,
         turns: turnUpdate
       }
       const result = await Day.findById(day._id).populate('turns.id_paciente');
